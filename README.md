@@ -4,18 +4,21 @@ POC For ITC INFOTECH
 # Pre-requisites
 
 1. Node.js
-Version used during development -  v12.4.0
+Node version -  v12.4.0
+Should work will 10.x LTS version
 
-Npm packages used
+#Npm packages
 
 1. lodash.find: "^4.6.0",
 2. lowdb: "^1.0.0"
 
 
+#Integtation Test
+
 The folder /ITC_INFOTECH_POC/postman_collection
 contains postman collection that can be imported to postman to test the api's
 
-Api's
+# Api's
 
 /robot/coordinate/create
 POST
