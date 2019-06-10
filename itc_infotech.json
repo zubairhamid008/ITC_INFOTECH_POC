@@ -23,12 +23,17 @@
           3
         ]
       ],
-      "instructions": "NNESEESWNWW"
+      "instructions": "NNESEESWNWW",
+      "final_cord": [
+        1,
+        3
+      ],
+      "patches_cleaned": 1
     }
   ],
   "coords": [
     1,
-    2
+    3
   ],
-  "patches": 3
+  "patches": 1
 }

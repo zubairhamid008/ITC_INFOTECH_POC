@@ -4,6 +4,8 @@
 
     let database_handler = require("../database_handler");
 
+    let robot_cleaner = require("../robot_cleaner");
+
     //fetch patch
     let get_patch = async () => {
         let db = await database_handler.getDbInstance();
@@ -11,29 +13,24 @@
         return (!patches) ? 0 : patches;
     };
 
-    //update patch information
-    let set_patch = async (patch_set) => {
-        let db = await database_handler.getDbInstance();
-        let patches = db.get("patches").value();
-        let patch = (!patches) ? 0 : patches;
-        let response = patch  + patch_set.length;
-        return response;
-    };
-
     //function to save coordinates
     module.exports.save_coordinates = async (request_body) => {
         let status = 200;
-        let patches = (request_body.patches).length;
+        let instruction_response = await robot_cleaner.execute_instructions(request_body);
         let db = await database_handler.getDbInstance();
+        let final_cord = [ instruction_response.current_row, instruction_response.current_clm ];
+        let cleaned_patches = instruction_response.patches_cleaned;
 
+        request_body["final_cord"] = final_cord;
+        request_body["patches_cleaned"] = cleaned_patches;
         //push data to persistent database
         db.get("coordinate").push(request_body).write();
-        db.set("coords", request_body.coords).write();
-        db.set("patches", await set_patch(request_body.patches)).write();
-        return await response_obj(status, {"coords": request_body.coords, "patches": patches }, "Coordinates recorded successfully");
+        db.set("coords", final_cord).write();
+        db.set("patches", instruction_response.patches_cleaned).write();
+        return await response_obj(status, {"coords": final_cord, "patches": cleaned_patches }, "Coordinates recorded successfully");
     };
 
-    //function to retrieve coordinates
+    //function to retrieve last robot coordinates
     module.exports.fetch_coordinates = async (request_body) => {
         let status = 200;
         let db = await database_handler.getDbInstance();
@@ -41,6 +38,7 @@
         return await response_obj(status, {"coords": final_coord, "patches" : await get_patch()});
     };
 
+    //List all incoming instructions
     module.exports.list_coordinates = async (request_body) => {
         let status = 200;
         let db = await database_handler.getDbInstance();
